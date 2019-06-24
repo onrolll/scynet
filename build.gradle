@@ -23,7 +23,11 @@ repositories {
 
 dependencies {
     // Use the Kotlin JDK 8 standard library.
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.3.21'
+
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.3.40'
+
+
 
     // Use the Kotlin test library.
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
@@ -34,6 +38,7 @@ dependencies {
     compile group: 'org.apache.ignite', name: 'ignite-core', version: '2.7.5'
     compile group: 'org.apache.ignite', name: 'ignite-spring', version: '2.7.5'
     compile group: 'org.apache.ignite', name: 'ignite-indexing', version: '2.7.5'
+    compile group: 'org.apache.ignite', name: 'ignite-urideploy', version: '2.7.5'
 
     implementation 'com.github.googleapis.gax-kotlin:kgax-grpc:master-SNAPSHOT'
     implementation 'org.apache.kafka:kafka-streams:2.1.0'
@@ -43,3 +48,15 @@ dependencies {
 
 // Define the main class for the application.
 mainClassName = 'ai.scynet.AppKt'
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Scynet',
+                'Implementation-Version': '1.0',
+                'Main-Class': mainClassName
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    with jar
+}
